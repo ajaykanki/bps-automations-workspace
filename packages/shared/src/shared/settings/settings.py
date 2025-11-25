@@ -5,7 +5,9 @@ from pydantic import PostgresDsn
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=get_env_file(), extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=get_env_file(), extra="ignore", env_ignore_empty=True
+    )
     env: str = ENV
     keyring_service_name: str = KEYRING_SERVICE_NAME
     database_url: PostgresDsn | None = None
