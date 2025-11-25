@@ -6,6 +6,7 @@ class O365Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=get_env_file(),
         env_prefix="O365_",
+        env_ignore_empty=True,
         extra="ignore",
     )
     client_id: str | None = None

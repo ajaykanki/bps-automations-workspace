@@ -7,6 +7,7 @@ class WmillSettings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=get_env_file(),
         env_prefix="WMILL_",
+        env_ignore_empty=True,
         extra="ignore",
     )
 
