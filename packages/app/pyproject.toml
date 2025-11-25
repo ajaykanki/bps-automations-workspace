@@ -1,0 +1,12 @@
+[project]
+name = "app"
+version = "0.1.0"
+description = "Main application for the automation stack"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "shared",
+]
+
+[tool.uv.sources]
+shared = { workspace = true }

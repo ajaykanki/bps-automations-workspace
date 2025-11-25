@@ -8,4 +8,5 @@ dependencies = []
 members = [
     "packages/common",
     "packages/shared",
+    "packages/app",
 ]
