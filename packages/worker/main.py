@@ -1,4 +1,7 @@
+from settings import config
+
 def main():
+    print(config.model_dump())
     print("Hello from worker!")
 
 
