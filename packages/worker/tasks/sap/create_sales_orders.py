@@ -10,10 +10,10 @@ from tenacity import (
     Retrying,
     RetryError,
 )
-from logger import log
+from shared import log
 from core import task
 from settings import config
-from sap_gui import SAPGuiEngine, VKey, GuiSession
+from sap_gui_engine import SAPGuiEngine, VKey, GuiSession
 from rpatoolkit.df import read_excel
 from utils import build_screen_order, map_container_path_to_network
 from .mappings import (
@@ -69,7 +69,9 @@ def create_sales_orders(
 ):
     context.additional_context.update(resume_url=resume_url)
     screen_order_objects = build_screen_order(screen_order)
-    po_working_network_path = map_container_path_to_network(po_working_path, "soc")
+    po_working_network_path = map_container_path_to_network(
+        po_working_path, "test" if config.is_dev else "soc"
+    )
 
     if not po_working_network_path.exists():
         raise FileNotFoundError(
