@@ -9,4 +9,5 @@ members = [
     "packages/common",
     "packages/shared",
     "packages/app",
+    "packages/worker",
 ]
