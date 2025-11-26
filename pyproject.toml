@@ -10,4 +10,5 @@ members = [
     "packages/shared",
     "packages/app",
     "packages/worker",
+    "packages/sap_gui_engine",
 ]
