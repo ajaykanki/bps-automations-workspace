@@ -10,12 +10,19 @@ from .post_result import post_result
 def task(original_func: Optional[Callable] = None, **kwargs):
     """
     Task middleware to define procrastinate tasks and do something with the result
+    Each task must take the JobContext as the first argument and a keyword argument named "resume_url"
     """
 
     def wrap(func: Callable) -> Callable:
         @functools.wraps(func)
         def new_func(*job_args, **job_kwargs) -> Any:
+            # Get the context from the first argument of the task
             context: JobContext = job_args[0] if job_args else None
+            # Attach resume_url to additional_context
+            resume_url = job_kwargs.get("resume_url")
+            if resume_url:
+                context.additional_context["resume_url"] = resume_url
+
             try:
                 result = func(*job_args, **job_kwargs)
                 job_result = JobResult(
@@ -42,7 +49,7 @@ def task(original_func: Optional[Callable] = None, **kwargs):
                     worker_name=context.worker_name if context else "unknown",
                     worker_id=context.job.worker_id if context else None,
                     result=error_object,
-                    resume_url=context.additional_context.get("resume_url", None),
+                    resume_url=context.additional_context.get("resume_url"),
                 )
                 post_result(job_result)
                 # Re-raise the exception to maintain the expected error behavior
