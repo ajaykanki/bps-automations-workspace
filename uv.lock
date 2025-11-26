@@ -48,6 +48,7 @@ version = "0.1.0"
 source = { virtual = "packages/app" }
 dependencies = [
     { name = "fastapi", extra = ["standard"] },
+    { name = "httpx" },
     { name = "o365" },
     { name = "scalar-fastapi" },
     { name = "shared" },
@@ -56,6 +57,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = ">=0.122.0" },
+    { name = "httpx", specifier = ">=0.28.1" },
     { name = "o365", specifier = ">=2.1.7" },
     { name = "scalar-fastapi", specifier = ">=1.4.4" },
     { name = "shared", editable = "packages/shared" },
