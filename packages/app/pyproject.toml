@@ -8,6 +8,7 @@ dependencies = [
     "fastapi[standard]>=0.122.0",
     "httpx>=0.28.1",
     "o365>=2.1.7",
+    "rapidfuzz>=3.14.3",
     "scalar-fastapi>=1.4.4",
     "shared",
 ]

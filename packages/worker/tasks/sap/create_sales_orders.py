@@ -67,7 +67,6 @@ def create_sales_orders(
     screen_order: list[dict[str, Any]],
     resume_url: str | None = None,
 ):
-    context.additional_context.update(resume_url=resume_url)
     screen_order_objects = build_screen_order(screen_order)
     po_working_network_path = map_container_path_to_network(
         po_working_path, "test" if config.is_dev else "soc"
@@ -81,14 +80,16 @@ def create_sales_orders(
     df = read_excel(
         po_working_network_path, drop_empty_cols=False, drop_empty_rows=False
     ).collect()
-    df = insert_sales_order_col(df)
+    df = create_additional_cols(df)
+    # TODO: Check if sales orders already exists for these POs
+    # TODO: Create 'already exists' dataframe
+    # TODO: Send already exists payload back to windmill
 
     sales_orders = collect_sales_orders_data(df)
-
     total_sales_orders = len(sales_orders)
     log.info("Total sales orders to be created: {}", total_sales_orders)
-
     sap = init_sap_and_login()
+
     # Create an empty output dataframe with the same schema as the input dataframe
     output_df = pl.DataFrame(schema=df.schema)
     error_df = pl.DataFrame(
@@ -97,7 +98,6 @@ def create_sales_orders(
     error_list = []  # PO Number and Screenshot Path
     for so_count, line_items in sales_orders.items():
         log.info(f"Creating sales order {so_count} of {total_sales_orders}")
-
         so_number = None
         error_message = None
 
@@ -426,16 +426,10 @@ def collect_sales_orders_data(df: pl.DataFrame) -> dict[str, list[dict[str, Any]
 
 
 @retry(reraise=True, stop=stop_after_attempt(3), wait=wait_fixed(1))
-def insert_sales_order_col(df: pl.DataFrame) -> pl.DataFrame:
-    if "po number" in df.columns:
-        idx = df.columns.index("po number")
-        df.insert_column(
-            idx + 1, pl.Series("sales order", [None] * len(df), dtype=pl.String)
-        )
-    else:
-        # insert after 1st column
-        df.insert_column(1, pl.Series("sales order", [None] * len(df), dtype=pl.String))
-
+def create_additional_cols(df: pl.DataFrame) -> pl.DataFrame:
+    # Create so number and remarks column
+    df.insert_column(1, pl.Series("so number", [None] * len(df), dtype=pl.Int64))
+    df.insert_column(2, pl.Series("remarks", [None] * len(df), dtype=pl.String))
     return df
 
 
